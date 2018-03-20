@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  postgres:
+    container_name: postgresql
+    restart: always
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=flask
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
