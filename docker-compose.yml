@@ -8,8 +8,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=user
+      - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=flask
+      - POSTGRES_DB=mydb
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
