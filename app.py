@@ -23,11 +23,6 @@ app.config['MONGODB_SETTINGS'] = {
 db = MongoEngine()
 
 
-@app.route("/")
-def hello():
-    return "Hello Flask!"
-
-
 @app.route('/users/<email>', methods=['POST'])
 def save_user(email):
     print(f'Attempting to save user with email {email}', flush=True)
@@ -49,9 +44,15 @@ def save_user(email):
 def list_users():
     print('Listing users', flush=True)
     users = User.objects
-    return '\n'.join(map(lambda user: user.email, users)) if users else 'User list is empty'
+    return '\n'.join(map(lambda user: user.email, users)) if users else 'User list is empty\n'
+
+
+@app.route("/")
+def hello():
+    return "Hello Flask!\n"
 
 
 if __name__ == '__main__':
+    print(f'Connecting to mongo at {MONGO_HOST}:{MONGO_PORT}')
     db.init_app(app)
     app.run(host='0.0.0.0')
