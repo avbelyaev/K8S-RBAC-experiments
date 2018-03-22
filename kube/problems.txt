@@ -1,0 +1,21 @@
+
+============================
+E0322 15:52:54.914335    5946 start.go:234] Error updating cluster:
+Error updating localkube from uri: Error creating localkube asset from url:
+Error opening file asset: /home/bg-user/.minikube/cache/localkube/localkube-v1.9.4:
+open /home/bg-user/.minikube/cache/localkube/localkube-v1.9.4: no such file or directory
+
+- download localkube
+- rename to localkube-v1.9.4
+- place at /localkube
+
+============================
+minikube starts hangs on at "Starting VM..."
+
+- minikube delete
+- rm -rf ~/.minikube
+
+============================
+hello-minikube image not found "--image=8s.gcr.io/echoserver:1.4"
+
+- --image=gcr.io/google_containers/echoserver:1.4
