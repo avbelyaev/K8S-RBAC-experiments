@@ -8,11 +8,12 @@ services:
     volumes:
       - ./data/db:/data/db
 
-#  service:
-#    image: flask
-#    environment:
-#      - DB_HOST=postgresql
-#    ports:
-#      - "8080:5000"
-#    depends_on:
-#      - db
+  service:
+    image: flask
+    environment:
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+    ports:
+      - "8080:5000"
+    depends_on:
+      - mongo

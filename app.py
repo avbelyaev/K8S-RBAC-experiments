@@ -7,10 +7,9 @@ from mongoengine import StringField
 
 
 MONGO_HOST = os.environ['MONGO_HOST']
-MONGO_PORT = os.environ['MONGO_PORT']
+MONGO_PORT = int(os.environ['MONGO_PORT'])
 
 
-# th
 class User(Document):
     email = StringField(required=True)
 
@@ -50,9 +49,9 @@ def save_user(email):
 def list_users():
     print('Listing users', flush=True)
     users = User.objects
-    return '\n'.join(map(str, users)) if users else 'User list is empty'
+    return '\n'.join(map(lambda user: user.email, users)) if users else 'User list is empty'
 
 
 if __name__ == '__main__':
     db.init_app(app)
-    app.run()
+    app.run(host='0.0.0.0')
