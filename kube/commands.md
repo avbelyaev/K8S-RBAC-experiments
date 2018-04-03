@@ -32,9 +32,12 @@ curl $(minikube service hello-flask --url)/hello
 ```
 
 
-# create from file
+# run from file
 ```bash
-kubectl create -f pod-flask.yaml
+kubectl create -f file.yaml
+
+#update changes in file
+kubectl apply -f file.yml
 ```
 
 

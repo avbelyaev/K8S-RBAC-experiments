@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-deployment
+spec:
+  selector:
+    matchLabels:
+      app: flask
+  replicas: 3
+  template:
+    metadata:
+      # unlike pod-nginx.yaml, the name is not included in the meta data as a unique name is
+      # generated from the deployment name
+      labels:
+        app: flask
+    spec:
+      containers:
+      - name: flask
+        image: flask:2
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MONGO_HOST
+          value: "localhost" # containers in same pod run on localhost
+        - name: MONGO_PORT
+          value: "27017"
