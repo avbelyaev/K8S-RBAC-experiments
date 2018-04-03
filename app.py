@@ -4,10 +4,14 @@ import os
 from flask import Flask
 from flask_mongoengine import MongoEngine, Document
 from mongoengine import StringField
+from functools import partial
+
+print = partial(print, flush=True)
 
 
-MONGO_HOST = os.environ['MONGO_HOST']
-MONGO_PORT = int(os.environ['MONGO_PORT'])
+
+MONGO_HOST = 'localhost' #os.environ['MONGO_HOST']
+MONGO_PORT = 27017 #int(os.environ['MONGO_PORT'])
 
 
 class User(Document):
@@ -25,11 +29,11 @@ db = MongoEngine()
 
 @app.route('/users/<email>', methods=['POST'])
 def save_user(email):
-    print(f'Attempting to save user with email {email}', flush=True)
+    print(f'Attempting to save user with email {email}')
 
     existing_user = next(filter(lambda user_doc: user_doc.email == email, User.objects), None)
     if existing_user:
-        print(f'User with email {email} already exists', flush=True)
+        print(f'User with email {email} already exists')
         return 'Ignored as duplicate\n'
 
     else:
@@ -42,12 +46,16 @@ def save_user(email):
 
 @app.route("/users")
 def list_users():
-    print('Listing users', flush=True)
+    print('Listing users')
     users = User.objects
-    return '\n'.join(map(lambda user: user.email, users)) if users else 'User list is empty\n'
+    if users:
+        return '\n'.join(map(lambda user: user.email, users))
+
+    else:
+        return 'User list is empty\n'
 
 
-@app.route("/")
+@app.route("/hello")
 def hello():
     return "Hello Flask!\n"
 
