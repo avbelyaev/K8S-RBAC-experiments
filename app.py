@@ -9,9 +9,8 @@ from functools import partial
 print = partial(print, flush=True)
 
 
-
-MONGO_HOST = 'localhost' #os.environ['MONGO_HOST']
-MONGO_PORT = 27017 #int(os.environ['MONGO_PORT'])
+MONGO_HOST = os.environ['MONGO_HOST']
+MONGO_PORT = int(os.environ['MONGO_PORT'])
 
 
 class User(Document):
@@ -57,7 +56,7 @@ def list_users():
 
 @app.route("/hello")
 def hello():
-    return "Hello Flask!\n"
+    return "Hello Flask v2!\n"
 
 
 if __name__ == '__main__':
