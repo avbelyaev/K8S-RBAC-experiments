@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: flask
+  labels:
+    app: flask
+spec:
+  containers:
+  - name: flask
+    image: flask:1
+    ports:
+    - containerPort: 5000
+
+# kubectl create -f pod-flask.yaml
