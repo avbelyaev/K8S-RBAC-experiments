@@ -16,15 +16,16 @@ kubectl cluster-info === minikube ip
 ```
 
 
-# run
+# run end expose
 ```bash
+# create new deployment
 kubectl run hello-minikube --image=k8s.gcr.io/echoserver:1.4 --port=8080
 
 #image from local
 docker build -t flask:1 .
 kubectl run hello-flask --image=flask:1 --port=5000 --image-pull-policy=Never
 
-#expose deployment as service
+#expose deployment as service (aka create new service)
 kubectl expose deployment hello-flask --type=NodePort
 
 #get service ip:port and check it
@@ -41,7 +42,7 @@ kubectl apply -f file.yml
 ```
 
 
-# run info
+# info
 ```bash
 kubectl get {pod/service/deployment}
 kubectl get pods -l app=flask
@@ -54,6 +55,23 @@ kubectl describe {deployment/service} hello-world
 ```bash
 kubectl delete pod hello-minikube-6bd65c5cb7-676hf
 kubectl delete service,pod,deployment hello-minikube
+```
+
+
+# namespaces and context
+```bash
+kubectl get namespace
+kubectl create -f namespace-prod.yaml
+
+kubectl config view
+# define a context for the kubectl client to work in each namespace
+kubectl config set-context dev --namespace=dev --cluster=minikube --user=minikube
+
+#switch to dev namespace (current-context should be "dev")
+kubectl config use-context dev
+
+# open service that lays in a namespace prod
+minikube --namespace=prod service flask-service --url
 ```
 
 # Notes
