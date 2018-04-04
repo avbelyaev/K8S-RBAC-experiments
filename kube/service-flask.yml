@@ -3,9 +3,12 @@ kind: Service
 metadata:
   name: flask-service
 spec:
+  selector:
+    app: flask
+
+  type: NodePort
   ports:
   - port: 6000 # the port that this service should serve on the container on each pod to connect to
     targetPort: 5000
     protocol: TCP
-  selector:
-    app: flask
+
