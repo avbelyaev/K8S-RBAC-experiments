@@ -19,4 +19,8 @@ openssl x509 -req -in dev.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -
 # create users and contexts in k8s api server
 ```bash
 kubectl config set-credentials dev-user --client-certificate=dev.crt --client-key=dev.key
+
+# create namespaces and then
+# create context == (cluster,user,ns)
+kubectl config set-context dev-context --cluster=minikube --namespace=dev-ns --user=dev-user
 ```
