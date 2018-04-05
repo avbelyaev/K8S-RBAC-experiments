@@ -1,5 +1,4 @@
 #! /usr/bin/env python3.6
-# @author anton.belyaev@bostongene.com
 import os
 from flask import Flask
 from flask_mongoengine import MongoEngine, Document
@@ -39,13 +38,14 @@ def save_user(email):
         user = User()
         user.email = email
         user.save()
-        print(f'User with email {email} successfully saved')
+        print(f'User with email {email} has been successfully saved')
         return f'User {email} has been saved!\n'
 
 
 @app.route("/users")
 def list_users():
     print('Listing users')
+
     users = User.objects
     if users:
         return '\n'.join(map(lambda user: user.email, users))
