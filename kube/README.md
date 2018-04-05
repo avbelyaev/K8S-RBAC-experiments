@@ -1,6 +1,6 @@
 # start up
 ```bash
-minikube --vm-driver=virtualbox start
+minikube --vm-driver=virtualbox --extra-config=apiserver.Authorization.Mode=RBAC start
 ```
 
 
