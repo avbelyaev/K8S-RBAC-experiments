@@ -1,6 +1,17 @@
 
-# Namaspaces
+# Namespaces
 A "context" defines a named (cluster,user,namespace) tuple
+
+RBAC:
+- Roles and ClusterRoles: Consist of rules. The difference is the scope: 
+in a Role, the rules are applicable to a single namespace, whereas a ClusterRole is cluster-wide
+- Subjects:
+  - User Accounts: These are global, and meant for humans or processes living outside the cluster.
+  - Service Accounts: This kind of account is namespaced and meant for intra-cluster processes running inside pods, which want to authenticate against the API
+  - Groups: This is used for referring to multiple accounts.
+- RoleBindings and ClusterRoleBindings: Just as the names imply, these bind subjects to roles (i.e. the operations a given user can perform).
+As for Roles and ClusterRoles, the difference lies in the scope
+
 
 
 # generate keys
@@ -23,4 +34,7 @@ kubectl config set-credentials dev-user --client-certificate=dev.crt --client-ke
 # create namespaces and then
 # create context == (cluster,user,ns)
 kubectl config set-context dev-context --cluster=minikube --namespace=dev-ns --user=dev-user
+
+# create role
+# create
 ```
