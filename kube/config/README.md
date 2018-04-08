@@ -35,6 +35,11 @@ kubectl config set-credentials dev-user --client-certificate=dev.crt --client-ke
 # create context == (cluster,user,ns)
 kubectl config set-context dev-context --cluster=minikube --namespace=dev-ns --user=dev-user
 
-# create role
-# create
+# create role and then roledeployment
+```
+
+
+# check priveleges
+```bash
+kubectl auth can-i create pods --namespace default --as dev-user
 ```
