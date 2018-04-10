@@ -2,6 +2,7 @@
 import os
 from flask import Flask
 from flask_mongoengine import MongoEngine, Document
+from flask import request
 from mongoengine import StringField
 from functools import partial
 
@@ -52,6 +53,12 @@ def list_users():
 
     else:
         return 'User list is empty\n'
+
+
+@app.route("/headers")
+def headers():
+    rq_headers = request.headers
+    return f'Headers:{rq_headers}'
 
 
 @app.route("/hello")
