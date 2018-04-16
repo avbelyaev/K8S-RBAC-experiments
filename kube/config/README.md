@@ -21,7 +21,7 @@ openssl genrsa -out dev.key 2048
 
 # create certificate sign request (csr)
 # CN = username, O = group
-openssl req -new -key dev.key -out dev.csr  -subj "/CN=developer/O=dev-group"
+openssl req -new -key dev.key -out dev.csr  -subj "/CN=dev-user/O=dev-group"
 
 # generate final certificate
 openssl x509 -req -in dev.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -out dev.crt -days 500
@@ -29,13 +29,24 @@ openssl x509 -req -in dev.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -
 
 # create users and contexts in k8s api server
 ```bash
+# credentials name "dev-user" must be equal to CN from certificate from above
 kubectl config set-credentials dev-user --client-certificate=dev.crt --client-key=dev.key
 
-# create namespaces and then
+# create namespaces (dev/prod)
+kubectl create -f namespace-dev.yaml
+kubectl create -f namespace-prod.yaml
+
 # create context == (cluster,user,ns)
 kubectl config set-context dev-context --cluster=minikube --namespace=dev-ns --user=dev-user
 
-# create role and then roledeployment
+# create roles (reader/admin)
+kubectl create -f role-reader-role.yaml 
+kubectl create -f role-admin-role.yaml
+
+# bind user "dev-user" to role "admin-role" at namespace "dev-ns" (developer is and admin in his namespace)
+kubectl create rolebinding dev-user-dev-ns-binding --user=dev-user --role=admin-role --namespace=dev-ns
+# bind "dev-user" to "reader-role" at namespace "prod-ns" (dev can only read at production)
+kubectl create rolebinding dev-user-prod-ns-binding --user=dev-user --role=reader-role --namespace=prod-ns
 ```
 
 
@@ -43,3 +54,20 @@ kubectl config set-context dev-context --cluster=minikube --namespace=dev-ns --u
 ```bash
 kubectl auth can-i create pods --namespace default --as dev-user
 ```
+
+
+# configure admin
+```bash
+# generate admin key & cert
+openssl genrsa -out admin.key 2048
+openssl req -new -key admin.key -out admin.csr  -subj "/CN=admin-user/O=admin-group"
+openssl x509 -req -in admin.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -out admin.crt -days 500
+
+#
+
+```
+
+# Links
+- [k8s auth docs](https://kubernetes.io/docs/admin/authentication/)
+- [EBay k8s auth overview (deprecated)](https://github.com/eBay/Kubernetes/blob/master/docs/user-guide/kubeconfig-file.md)
+- [RBAC configuration](https://docs.bitnami.com/kubernetes/how-to/configure-rbac-in-your-kubernetes-cluster/#step-5-test-the-rbac-rule)
