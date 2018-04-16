@@ -27,7 +27,7 @@ openssl req -new -key dev.key -out dev.csr  -subj "/CN=dev-user/O=dev-group"
 openssl x509 -req -in dev.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -out dev.crt -days 500
 ```
 
-# create users and contexts in k8s api server
+# create users, namespaces, contexts, roles, rolebindings
 ```bash
 # credentials name "dev-user" must be equal to CN from certificate from above
 kubectl config set-credentials dev-user --client-certificate=dev.crt --client-key=dev.key
@@ -38,21 +38,34 @@ kubectl create -f namespace-prod.yaml
 
 # create context == (cluster,user,ns)
 kubectl config set-context dev-context --cluster=minikube --namespace=dev-ns --user=dev-user
+```
 
+# grant roles to user with rolebindings
+```bash
 # create roles (reader/admin)
-kubectl create -f role-reader-role.yaml 
-kubectl create -f role-admin-role.yaml
+kubectl create -f role-reader.yaml 
+kubectl create -f role-admin.yaml
 
 # bind user "dev-user" to role "admin-role" at namespace "dev-ns" (developer is and admin in his namespace)
+# same as create -f rolebinding-dev-user-dev-ns.yaml
 kubectl create rolebinding dev-user-dev-ns-binding --user=dev-user --role=admin-role --namespace=dev-ns
+ 
 # bind "dev-user" to "reader-role" at namespace "prod-ns" (dev can only read at production)
+# same as create -f rolebinding-dev-user-prod-ns.yaml
 kubectl create rolebinding dev-user-prod-ns-binding --user=dev-user --role=reader-role --namespace=prod-ns
 ```
 
 
-# check priveleges
+# check privileges
 ```bash
-kubectl auth can-i create pods --namespace default --as dev-user
+kubectl auth can-i get pods --namespace=dev-ns --as dev-user
+yes
+kubectl auth can-i get pods --namespace=prod-ns --as dev-user
+yes
+kubectl auth can-i create pods --namespace=dev-ns --as dev-user
+yes
+kubectl auth can-i create pods --namespace=prod-ns --as dev-user
+no
 ```
 
 

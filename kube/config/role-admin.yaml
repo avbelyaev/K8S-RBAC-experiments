@@ -1,9 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-#  namespace: dev-ns
+  namespace: dev-ns
   name: admin-role
 rules:
 - apiGroups: ["", "extensions", "apps"]
   resources: ["services", "deployments", "pods", "pods/log", "nodes"]
   verbs: ["*"]
+
+# this role grants admin-like privileges at "dev-ns" namespace
+# it is assumed that this admin-role is binded to dev-user

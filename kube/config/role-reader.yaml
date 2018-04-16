@@ -1,9 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-#  namespace: dev-ns
+  namespace: prod-ns
   name: reader-role
 rules:
 - apiGroups: [""]
   resources: ["services", "deployments", "pods", "pods/log"]
   verbs: ["get", "list", "watch"]
+
+# this role grants reader privileges at "prod-ns" namespace
+# it is assumed that this read-only role is binded to dev-user
