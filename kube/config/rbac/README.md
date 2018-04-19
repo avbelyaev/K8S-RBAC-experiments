@@ -1,5 +1,12 @@
 # RBAC
 
+Start up
+```bash
+# minikube version <= 0.25
+minikube start --extra-config=apiserver.Authorization.Mode=RBAC 
+```
+
+
 RBAC:
 - Roles and ClusterRoles: Consist of rules. The difference is the scope: 
 in a Role, the rules are applicable to a single namespace, whereas a ClusterRole is cluster-wide
