@@ -2,7 +2,11 @@
 
 Start up
 ```bash
-minikube start --extra-config=apiserver.Authorization.Mode=ABAC --extra-config=apiserver.AuthorizationPolicyFile=auth_policy.jsonl
+minikube start \
+        --extra-config=apiserver.Authorization.Mode=ABAC \
+        --extra-config=apiserver.Authentication.TokenFile.TokenFile=auth_tokens.csv \
+        --extra-config=apiserver.AuthorizationPolicyFile=auth_policy.jsonl
+
 ```
 
 ### generate keys
