@@ -31,11 +31,11 @@ to use [k8s cert management system](https://v1-9.docs.kubernetes.io/docs/tasks/t
 kubectl config set-credentials dev-user --client-certificate=dev.crt --client-key=dev.key
 
 # create namespaces (dev/prod)
-kubectl create -f namespace-dev.yaml
-kubectl create -f namespace-prod.yaml
+kubectl create -f ns-stage.yaml
+kubectl create -f ns-prod.yaml
 
 # create context == (cluster,user,ns)
-kubectl config set-context dev-context --cluster=minikube --namespace=dev-ns --user=dev-user
+kubectl config set-context dev-context --cluster=minikube --namespace=stage-ns --user=dev-user
 ```
 
 

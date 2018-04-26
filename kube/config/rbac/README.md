@@ -41,11 +41,11 @@ to use [k8s cert management system](https://v1-9.docs.kubernetes.io/docs/tasks/t
 kubectl config set-credentials dev-user --client-certificate=dev.crt --client-key=dev.key
 
 # create namespaces (dev/prod)
-kubectl create -f namespace-dev.yaml
-kubectl create -f namespace-prod.yaml
+kubectl create -f ns-stage.yaml
+kubectl create -f ns-prod.yaml
 
 # create context == (cluster,user,ns)
-kubectl config set-context dev-context --cluster=minikube --namespace=dev-ns --user=dev-user
+kubectl config set-context dev-context --cluster=minikube --namespace=stage-ns --user=dev-user
 ```
 
 # grant roles to user with rolebindings
@@ -56,7 +56,7 @@ kubectl create -f role-admin.yaml
 
 # bind user "dev-user" to role "admin-role" at namespace "dev-ns" (developer is and admin in his namespace)
 # same as create -f rolebinding-dev-user-dev-ns.yaml
-kubectl create rolebinding dev-user-dev-ns-binding --user=dev-user --role=admin-role --namespace=dev-ns
+kubectl create rolebinding dev-user-stage-ns-binding --user=dev-user --role=admin-role --namespace=stage-ns
  
 # bind "dev-user" to "reader-role" at namespace "prod-ns" (dev can only read at production)
 # same as create -f rolebinding-dev-user-prod-ns.yaml
