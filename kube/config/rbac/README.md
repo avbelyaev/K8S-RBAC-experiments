@@ -62,39 +62,30 @@ kubectl create -f edit-prod-role-rb.yaml
 
 
 # OR create rolebindings manually
-# bind user "dev-user" to role "admin-role" at namespace "dev-ns" (developer is and admin in his namespace)
-kubectl create rolebinding view-stage-rb --user=frodo --role=view-stage-role --namespace=stage-ns
+# bind user "frodo" to role "view-stage-role" at namespace "stage-ns" (frodo can view-only on stage)
+# and do same to grant another roles (edit-stage-role) to somebody
+user=frodo
+kubectl create rolebinding view-stage-rb --user=${user} --role=view-stage-role --namespace=stage-ns
 ```
 
 
-# check privileges
+### check privileges
 ```bash
-kubectl auth can-i get pods --namespace=dev-ns --as dev-user
+kubectl auth can-i get pods --namespace=stage-ns --as frodo
 yes
-kubectl auth can-i get pods --namespace=prod-ns --as dev-user
+kubectl auth can-i get pods --namespace=prod-ns --as frodo
 yes
-kubectl auth can-i create pods --namespace=dev-ns --as dev-user
+kubectl auth can-i create pods --namespace=stage-ns --as frodo
 yes
-kubectl auth can-i create pods --namespace=prod-ns --as dev-user
+kubectl auth can-i create pods --namespace=prod-ns --as frodo
 no
 ```
 
 
-# configure admin
-```bash
-# generate admin key & cert
-openssl genrsa -out admin.key 2048
-openssl req -new -key admin.key -out admin.csr  -subj "/CN=admin-user/O=admin-group"
-openssl x509 -req -in admin.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -out admin.crt -days 500
-
-#
-
-```
-
-# Links
+### Links
 - [k8s auth docs](https://kubernetes.io/docs/admin/authentication/)
 - [EBay k8s auth overview (deprecated)](https://github.com/eBay/Kubernetes/blob/master/docs/user-guide/kubeconfig-file.md)
 - [RBAC configuration](https://docs.bitnami.com/kubernetes/how-to/configure-rbac-in-your-kubernetes-cluster/#step-5-test-the-rbac-rule)
 
-# TODO
+### TODO
 - [certificate signing request](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/)

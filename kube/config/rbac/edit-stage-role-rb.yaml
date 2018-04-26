@@ -14,7 +14,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: edit-stage-rb
-#  Do we need to mention ns here? since role is already binded to ns
+  namespace: stage-ns # ns should be explicitly set here no matter role is already binded to ns
 roleRef:
   kind: Role
   name: edit-stage-role
