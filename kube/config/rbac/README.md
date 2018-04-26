@@ -54,11 +54,11 @@ kubectl config set-context minikube-${user}-stage --cluster=minikube --user=${us
 ### create roles and grant roles to user via rolebindings
 ```bash
 # create roles and rolebindings on stage
-kubectl create -f view-stage-role-rb.yaml
-kubectl create -f edit-stage-role-rb.yaml 
+kubectl create -f view-stage-role.yaml
+kubectl create -f edit-stage-role.yaml 
 # crete roles and rolebindings on prod
-kubectl create -f view-prod-role-rb.yaml 
-kubectl create -f edit-prod-role-rb.yaml 
+kubectl create -f view-prod-role.yaml 
+kubectl create -f edit-prod-role.yaml 
 
 
 # OR create rolebindings manually
@@ -71,6 +71,10 @@ kubectl create rolebinding view-stage-rb --user=${user} --role=view-stage-role -
 
 ### check privileges
 ```bash
+# check rolebindings created
+kubectl get rolebinding --all-namespaces
+
+# check privileges
 kubectl auth can-i get pods --namespace=stage-ns --as frodo
 yes
 kubectl auth can-i get pods --namespace=prod-ns --as frodo
@@ -79,6 +83,24 @@ kubectl auth can-i create pods --namespace=stage-ns --as frodo
 yes
 kubectl auth can-i create pods --namespace=prod-ns --as frodo
 no
+```
+
+## grant and deny
+```bash
+# create user
+user=frodo
+# create rb frodo.view.stage
+kubectl create rolebinding ${user}.view.stage --user=${user} --role=view-stage-role --namespace=stage-ns
+# create rb frodo.edit.stage
+kubectl create rolebinding ${user}.edit.stage --user=${user} --role=edit-stage-role --namespace=stage-ns
+# create rb frodo.view.prod
+kubectl create rolebinding ${user}.view.prod --user=${user} --role=view-prod-role --namespace=prod-ns
+
+# find out namespaces where frodo's rolebindings exist
+kubectl get rolebinding --all-namespaces | grep frodo
+# delete them
+kubectl delete $(kubectl get rolebinding --all-namespaces -o name | grep frodo) --namespace=stage-ns
+kubectl delete $(kubectl get rolebinding --all-namespaces -o name | grep frodo) --namespace=prod-ns
 ```
 
 
