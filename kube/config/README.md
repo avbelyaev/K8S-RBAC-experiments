@@ -3,6 +3,13 @@
 - RBAC (Role-based access control)
 - ABAC (Attribute-based access control)
 
+### create namespaces
+```bash
+# create namespaces (stage/prod)
+kubectl create -f ns-stage.yaml
+kubectl create -f ns-prod.yaml
+```
+
 # Notes
 
 - k8s cannot revoke certs

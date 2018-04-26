@@ -37,24 +37,29 @@ openssl x509 -req -in certs/${user}.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikub
 Note: this dev.crt is created manually by accessing minikube's local CA file. The preffered way is 
 to use [k8s cert management system](https://v1-9.docs.kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/)
 
-# create users, namespaces, contexts, roles, rolebindings
+### create users, namespaces, contexts
 ```bash
-# credentials name "dev-user" must be equal to CN from certificate from above
-kubectl config set-credentials dev-user --client-certificate=dev.crt --client-key=dev.key
+# name "frodo" for credentials must be equal to CN from certificate
+user=frodo
+kubectl config set-credentials ${user} --client-certificate=certs/${user}.crt --client-key=certs/${user}.key 
 
-# create namespaces (dev/prod)
+# create namespaces (stage/prod)
 kubectl create -f ns-stage.yaml
 kubectl create -f ns-prod.yaml
 
 # create context == (cluster,user,ns)
-kubectl config set-context dev-context --cluster=minikube --namespace=stage-ns --user=dev-user
+kubectl config set-context minikube-${user}-stage --cluster=minikube --user=${user} --namespace=stage-ns
 ```
 
-# grant roles to user with rolebindings
+### create roles and grant roles to user via rolebindings
 ```bash
-# create roles (reader/admin)
-kubectl create -f role-reader.yaml 
-kubectl create -f role-admin.yaml
+# create roles on stage
+kubectl create -f role-view-stage.yaml
+kubectl create -f role-edit-stage.yaml 
+# crete roles on prod
+kubectl create -f role-view-prod.yaml 
+kubectl create -f role-edit-prod.yaml 
+
 
 # bind user "dev-user" to role "admin-role" at namespace "dev-ns" (developer is and admin in his namespace)
 # same as create -f rolebinding-dev-user-dev-ns.yaml
