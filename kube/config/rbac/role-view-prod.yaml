@@ -1,9 +1,0 @@
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  namespace: prod-ns
-  name: view-prod-role
-rules:
-- apiGroups: ["", "extensions", "apps"]
-  resources: ["services", "deployments", "pods", "pods/log", "nodes", "secrets", "configMaps"]
-  verbs: ["get", "list", "watch"]

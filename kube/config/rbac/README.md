@@ -53,21 +53,17 @@ kubectl config set-context minikube-${user}-stage --cluster=minikube --user=${us
 
 ### create roles and grant roles to user via rolebindings
 ```bash
-# create roles on stage
-kubectl create -f role-view-stage.yaml
-kubectl create -f role-edit-stage.yaml 
-# crete roles on prod
-kubectl create -f role-view-prod.yaml 
-kubectl create -f role-edit-prod.yaml 
+# create roles and rolebindings on stage
+kubectl create -f view-stage-role-rb.yaml
+kubectl create -f edit-stage-role-rb.yaml 
+# crete roles and rolebindings on prod
+kubectl create -f view-prod-role-rb.yaml 
+kubectl create -f edit-prod-role-rb.yaml 
 
 
+# OR create rolebindings manually
 # bind user "dev-user" to role "admin-role" at namespace "dev-ns" (developer is and admin in his namespace)
-# same as create -f rolebinding-dev-user-dev-ns.yaml
-kubectl create rolebinding dev-user-stage-ns-binding --user=dev-user --role=admin-role --namespace=stage-ns
- 
-# bind "dev-user" to "reader-role" at namespace "prod-ns" (dev can only read at production)
-# same as create -f rolebinding-dev-user-prod-ns.yaml
-kubectl create rolebinding dev-user-prod-ns-binding --user=dev-user --role=reader-role --namespace=prod-ns
+kubectl create rolebinding view-stage-rb --user=frodo --role=view-stage-role --namespace=stage-ns
 ```
 
 
