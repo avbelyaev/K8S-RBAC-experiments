@@ -1,12 +1,5 @@
 # RBAC
 
-Start up
-```bash
-# minikube version <= 0.25
-minikube start --extra-config=apiserver.Authorization.Mode=RBAC 
-```
-
-
 RBAC:
 - Roles and ClusterRoles: Consist of rules. The difference is the scope: 
 in a Role, the rules are applicable to a single namespace, whereas a ClusterRole is cluster-wide
@@ -19,17 +12,26 @@ As for Roles and ClusterRoles, the difference lies in the scope
 
 A "context" defines a named (cluster,user,namespace) tuple
 
-# generate keys
+Start up
 ```bash
+# minikube version <= 0.25
+minikube start --extra-config=apiserver.Authorization.Mode=RBAC 
+```
+
+### generate keys
+```bash
+# let Frodo be a user
+user=frodo
+
 # create key
-openssl genrsa -out dev.key 2048
+openssl genrsa -out certs/${user}.key 2048
 
 # create certificate sign request (csr)
-# CN = username, O = group
-openssl req -new -key dev.key -out dev.csr  -subj "/CN=dev-user/O=dev-group"
+# CN = username, O = group (*group can be used as subject in rolebinding later)
+openssl req -new -key certs/${user}.key -out certs/${user}.csr  -subj "/CN=${user}"
 
 # generate final certificate
-openssl x509 -req -in dev.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -out dev.crt -days 500
+openssl x509 -req -in certs/${user}.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -out certs/${user}.crt -days 500
 ```
 
 Note: this dev.crt is created manually by accessing minikube's local CA file. The preffered way is 
