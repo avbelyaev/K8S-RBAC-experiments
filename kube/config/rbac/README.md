@@ -104,6 +104,11 @@ kubectl delete $(kubectl get rolebinding --all-namespaces -o name | grep frodo) 
 ```
 
 
+## CSR
+- [TLS bootstrapping @medium](https://medium.com/@toddrosner/kubernetes-tls-bootstrapping-cf203776abc7)
+- [yet another TLS article](https://jenciso.github.io/personal/manage-tls-certificates-for-kubernetes-users)
+
+
 ### Links
 - [k8s auth docs](https://kubernetes.io/docs/admin/authentication/)
 - [EBay k8s auth overview (deprecated)](https://github.com/eBay/Kubernetes/blob/master/docs/user-guide/kubeconfig-file.md)

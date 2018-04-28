@@ -16,6 +16,7 @@ kubectl cluster-info === minikube ip
 ```
 
 
+## Basics
 ### run end expose
 ```bash
 # create new deployment
