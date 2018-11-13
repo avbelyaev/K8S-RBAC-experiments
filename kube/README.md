@@ -1,6 +1,8 @@
 ### start up
 ```bash
 minikube --vm-driver=virtualbox start
+    
+minikube stop
 ```
 
 
@@ -73,6 +75,17 @@ kubectl config use-context dev
 
 # open service that lays in a namespace prod
 minikube --namespace=prod service flask-service --url
+```
+
+### Troubleshooting
+```bash
+# in case of trouble do
+minikube stop
+minikube delete
+minikube start
+
+# in case of fire do
+rm -rf ~/.minikube
 ```
 
 ### Notes

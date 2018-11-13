@@ -8,6 +8,8 @@
 # create namespaces (stage/prod)
 kubectl create -f ns-stage.yaml
 kubectl create -f ns-prod.yaml
+
+kubectl get namespace
 ```
 
 # Notes
