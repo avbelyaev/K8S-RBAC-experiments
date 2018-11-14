@@ -15,10 +15,13 @@ A "context" defines a named (cluster,user,namespace) tuple
 Start up
 ```bash
 # minikube version <= 0.25
-minikube start --extra-config=apiserver.Authorization.Mode=RBAC 
+minikube --extra-config=apiserver.Authorization.Mode=RBAC start  
+
+# !! looks like v0.30.0 does not start with this arg 
+# or hangs on 'Starting cluster components...' 
 ```
 
-### generate keys
+## X509 Certs
 ```bash
 # let Frodo be a user
 user=frodo
@@ -36,6 +39,12 @@ openssl x509 -req -in certs/${user}.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikub
 
 Note: this dev.crt is created manually by accessing minikube's local CA file. The preffered way is 
 to use [k8s cert management system](https://v1-9.docs.kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/)
+
+## Tokens
+```bash
+#create service account
+kubectl create -f reader-sa.yaml
+```
 
 ### create users, namespaces, contexts
 ```bash
