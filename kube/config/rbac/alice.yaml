@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  namespace: stage-ns
-  name: stage-reader-sa
+  namespace: stage
+  name: alice
 
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  namespace: stage-ns
+  namespace: stage
   name: stage-reader-role
 rules:
 - apiGroups: [""]
@@ -21,13 +21,13 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  namespace: stage-ns
-  name: stage-reader-rb
+  namespace: stage
+  name: alice-staging-rb
 roleRef:
   kind: Role
   name: stage-reader-role
   apiGroup: rbac.authorization.k8s.io
 subjects:
 - kind: User
-  name: stage-reader-sa
+  name: alice
   apiGroup: rbac.authorization.k8s.io

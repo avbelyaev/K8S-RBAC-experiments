@@ -21,6 +21,92 @@ minikube --extra-config=apiserver.Authorization.Mode=RBAC start
 # or hangs on 'Starting cluster components...' 
 ```
 
+## Tokens
+
+#### on behalf of admin:
+```bash
+# create service account (alice), role (stage-reader-role) and bind role to sa via rolebinding (alice-staging-rb)
+# all this happens in 'stage' namespace
+kubectl create -f alice.yaml
+
+# alice's service account has been created
+kubectl -n stage get sa stage-sa -o json
+```
+
+Suppose alice's sa looks like this:
+```json
+{
+    "kind": "ServiceAccount",
+    "metadata": {
+        "name": "alice"
+    },
+    "secrets": [{ "name": "alice-token-nt8wm" }]
+}
+```
+
+Now we need to get alice's secret and token and debase64 them:
+```bash
+# secret name from above
+kubectl -n stage get secret alice-token-nt8wm -o json
+
+# put ca.crt into 'ca.crt', token into 'token'
+# decode them from base64:
+base64 --decode ca.crt > alice-ca.crt
+base64 --decode token > alice.token
+```
+
+Also we should tell alice where is cluster's master:
+```bash
+kubectl cluster-info
+```
+
+Now we should give alice's credentials (`alice-ca.crt` and `alice.token`) and master's address to user (alice)
+
+Since now cluster know that Alice exists
+
+#### on behalf of user:
+
+Let's configure kubectl to interact with cluster. We should have `alice-ca.crt` and `alice.token`
+
+```bash
+# install kubectl
+# check configuration
+kubectl config view
+
+# ==============================
+# >>> CREATE CLUSTER
+# --embed-certs: save certs for the cluster entry in kubeconfig
+# --server: where cluster's master is running
+# --certificate-authority: cert for talking with master
+kubectl config set-cluster mini-cluster \
+    --embed-certs=true \ 
+    --server=https://192.168.99.100:8443 \
+    --certificate-authority=alice-ca.crt
+
+# =============================
+# >>> CREATE USER
+# --token: contents of alice.token
+kubectl kubectl config set-credentials alice-staging \
+    --token=MiOiJrdWJlcm5ldGVzL3NlcnZp...
+    
+# =============================
+# >>> BIND ALICE WITH CLUSTER AND NAMESPACE
+# context = (user,cluster,namespace)
+kubectl config set-context alice-ctx \
+    --user=alice-staging \
+    --cluster=mini-cluster \
+    --namespace=stage
+    
+# make sure everything has been created
+kubectl config view
+```
+
+Switch to context to interact with cluster
+```bash
+kubectl config use-context alice-ctx
+```
+
+
 ## X509 Certs
 ```bash
 # let Frodo be a user
@@ -40,12 +126,6 @@ openssl x509 -req -in certs/${user}.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikub
 Note: this dev.crt is created manually by accessing minikube's local CA file. The preffered way is 
 to use [k8s cert management system](https://v1-9.docs.kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/)
 
-## Tokens
-```bash
-#create service account
-kubectl create -f reader-sa.yaml
-```
-
 ### create users, namespaces, contexts
 ```bash
 # name "frodo" for credentials must be equal to CN from certificate
@@ -57,7 +137,7 @@ kubectl create -f ns-stage.yaml
 kubectl create -f ns-prod.yaml
 
 # create context == (cluster,user,ns)
-kubectl config set-context minikube-${user}-stage --cluster=minikube --user=${user} --namespace=stage-ns
+kubectl config set-context minikube-${user}-stage --cluster=minikube --user=${user} --namespace=stage
 ```
 
 ### create roles and grant roles to user via rolebindings
@@ -71,10 +151,10 @@ kubectl create -f edit-prod-role.yaml
 
 
 # OR create rolebindings manually
-# bind user "frodo" to role "view-stage-role" at namespace "stage-ns" (frodo can view-only on stage)
+# bind user "frodo" to role "view-stage-role" at namespace "stage" (frodo can view-only on stage)
 # and do same to grant another roles (edit-stage-role) to somebody
 user=frodo
-kubectl create rolebinding view-stage-rb --user=${user} --role=view-stage-role --namespace=stage-ns
+kubectl create rolebinding view-stage-rb --user=${user} --role=view-stage-role --namespace=stage
 ```
 
 
@@ -84,13 +164,13 @@ kubectl create rolebinding view-stage-rb --user=${user} --role=view-stage-role -
 kubectl get rolebinding --all-namespaces
 
 # check privileges
-kubectl auth can-i get pods --namespace=stage-ns --as frodo
+kubectl auth can-i get pods --namespace=stage --as frodo
 yes
-kubectl auth can-i get pods --namespace=prod-ns --as frodo
+kubectl auth can-i get pods --namespace=prod --as frodo
 yes
-kubectl auth can-i create pods --namespace=stage-ns --as frodo
+kubectl auth can-i create pods --namespace=stage --as frodo
 yes
-kubectl auth can-i create pods --namespace=prod-ns --as frodo
+kubectl auth can-i create pods --namespace=prod --as frodo
 no
 ```
 
@@ -99,17 +179,17 @@ no
 # create user
 user=frodo
 # create rb frodo.view.stage
-kubectl create rolebinding ${user}.view.stage --user=${user} --role=view-stage-role --namespace=stage-ns
+kubectl create rolebinding ${user}.view.stage --user=${user} --role=view-stage-role --namespace=stage
 # create rb frodo.edit.stage
-kubectl create rolebinding ${user}.edit.stage --user=${user} --role=edit-stage-role --namespace=stage-ns
+kubectl create rolebinding ${user}.edit.stage --user=${user} --role=edit-stage-role --namespace=stage
 # create rb frodo.view.prod
-kubectl create rolebinding ${user}.view.prod --user=${user} --role=view-prod-role --namespace=prod-ns
+kubectl create rolebinding ${user}.view.prod --user=${user} --role=view-prod-role --namespace=prod
 
 # find out namespaces where frodo's rolebindings exist
 kubectl get rolebinding --all-namespaces | grep frodo
 # delete them
-kubectl delete $(kubectl get rolebinding --all-namespaces -o name | grep frodo) --namespace=stage-ns
-kubectl delete $(kubectl get rolebinding --all-namespaces -o name | grep frodo) --namespace=prod-ns
+kubectl delete $(kubectl get rolebinding --all-namespaces -o name | grep frodo) --namespace=stage
+kubectl delete $(kubectl get rolebinding --all-namespaces -o name | grep frodo) --namespace=prod
 ```
 
 
