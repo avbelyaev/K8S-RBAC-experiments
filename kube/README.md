@@ -86,6 +86,7 @@ minikube start
 
 # in case of fire do
 rm -rf ~/.minikube
+rm -rf ~/.kube
 ```
 
 ### Notes

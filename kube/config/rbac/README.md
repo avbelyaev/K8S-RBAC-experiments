@@ -25,12 +25,17 @@ minikube --extra-config=apiserver.Authorization.Mode=RBAC start
 
 #### on behalf of admin:
 ```bash
-# create service account (alice), role (stage-reader-role) and bind role to sa via rolebinding (alice-staging-rb)
-# all this happens in 'stage' namespace
-kubectl create -f alice.yaml
+# create service account for alice at stage namespace
+kubectl create sa alice -n stage
+
+# create role (stage-reader-role)
+kubectl create -f stage-reader-role.yaml
+
+# bind role to sa via rolebinding (alice-staging-rb)
+kubectl create -f rb-alice.yaml
 
 # alice's service account has been created
-kubectl -n stage get sa stage-sa -o json
+kubectl -n stage get sa alice -o json
 ```
 
 Suppose alice's sa looks like this:
@@ -47,7 +52,7 @@ Suppose alice's sa looks like this:
 Now we need to get alice's secret and token and debase64 them:
 ```bash
 # secret name from above
-kubectl -n stage get secret alice-token-nt8wm -o json
+kubectl get secret alice-token-nt8wm -o json
 
 # put ca.crt into 'ca.crt', token into 'token'
 # decode them from base64:
@@ -86,7 +91,7 @@ kubectl config set-cluster mini-cluster \
 # =============================
 # >>> CREATE USER
 # --token: contents of alice.token
-kubectl kubectl config set-credentials alice-staging \
+kubectl config set-credentials alice-staging \
     --token=MiOiJrdWJlcm5ldGVzL3NlcnZp...
     
 # =============================
@@ -104,6 +109,12 @@ kubectl config view
 Switch to context to interact with cluster
 ```bash
 kubectl config use-context alice-ctx
+
+# check permissions
+kubectl auth can-i get pods -n stage
+# yes
+kubectl auth can-i get pods -n prod
+# nope
 ```
 
 
