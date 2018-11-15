@@ -5,9 +5,8 @@
 
 ### create namespaces
 ```bash
-# create namespaces (stage/prod)
-kubectl create -f ns-stage.yaml
-kubectl create -f ns-prod.yaml
+# create namespaces
+kubectl create -f namespaces.yaml
 
 kubectl get namespace
 ```
