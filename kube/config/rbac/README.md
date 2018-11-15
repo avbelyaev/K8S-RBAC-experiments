@@ -26,10 +26,10 @@ minikube --extra-config=apiserver.Authorization.Mode=RBAC start
 #### on behalf of admin:
 ```bash
 # create service account for alice at stage namespace
-kubectl create sa alice -n stage
+kubectl -n stage create sa alice
 
-# create role (stage-reader-role)
-kubectl create -f stage-reader-role.yaml
+# create cluster-role (not namespace-scoped)
+kubectl create -f roles/stage-reader-role.yaml
 
 # bind role to sa via rolebinding (alice-staging-rb)
 kubectl create -f rb-alice.yaml
@@ -43,7 +43,8 @@ Suppose alice's sa looks like this:
 {
     "kind": "ServiceAccount",
     "metadata": {
-        "name": "alice"
+        "name": "alice",
+        "namespace": "stage"
     },
     "secrets": [{ "name": "alice-token-nt8wm" }]
 }
@@ -83,24 +84,17 @@ kubectl config view
 # --embed-certs: save certs for the cluster entry in kubeconfig
 # --server: where cluster's master is running
 # --certificate-authority: cert for talking with master
-kubectl config set-cluster mini-cluster \
-    --embed-certs=true \ 
-    --server=https://192.168.99.100:8443 \
-    --certificate-authority=alice-ca.crt
+kubectl config set-cluster mini-cluster --embed-certs=true --server=https://192.168.99.100:8443 --certificate-authority=alice-ca.crt
 
 # =============================
 # >>> CREATE USER
 # --token: contents of alice.token
-kubectl config set-credentials alice-staging \
-    --token=MiOiJrdWJlcm5ldGVzL3NlcnZp...
+kubectl config set-credentials alice --token=$(cat alice.token)
     
 # =============================
 # >>> BIND ALICE WITH CLUSTER AND NAMESPACE
 # context = (user,cluster,namespace)
-kubectl config set-context alice-ctx \
-    --user=alice-staging \
-    --cluster=mini-cluster \
-    --namespace=stage
+kubectl config set-context alice-stage --user=alice --cluster=mini-cluster --namespace=stage
     
 # make sure everything has been created
 kubectl config view
@@ -136,38 +130,6 @@ openssl x509 -req -in certs/${user}.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikub
 
 Note: this dev.crt is created manually by accessing minikube's local CA file. The preffered way is 
 to use [k8s cert management system](https://v1-9.docs.kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/)
-
-### create users, namespaces, contexts
-```bash
-# name "frodo" for credentials must be equal to CN from certificate
-user=frodo
-kubectl config set-credentials ${user} --client-certificate=certs/${user}.crt --client-key=certs/${user}.key 
-
-# create namespaces (stage/prod)
-kubectl create -f ns-stage.yaml
-kubectl create -f ns-prod.yaml
-
-# create context == (cluster,user,ns)
-kubectl config set-context minikube-${user}-stage --cluster=minikube --user=${user} --namespace=stage
-```
-
-### create roles and grant roles to user via rolebindings
-```bash
-# create roles and rolebindings on stage
-kubectl create -f view-stage-role.yaml
-kubectl create -f edit-stage-role.yaml 
-# crete roles and rolebindings on prod
-kubectl create -f view-prod-role.yaml 
-kubectl create -f edit-prod-role.yaml 
-
-
-# OR create rolebindings manually
-# bind user "frodo" to role "view-stage-role" at namespace "stage" (frodo can view-only on stage)
-# and do same to grant another roles (edit-stage-role) to somebody
-user=frodo
-kubectl create rolebinding view-stage-rb --user=${user} --role=view-stage-role --namespace=stage
-```
-
 
 ### check privileges
 ```bash

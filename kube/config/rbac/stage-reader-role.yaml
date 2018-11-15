@@ -1,9 +1,0 @@
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  namespace: stage
-  name: stage-reader-role
-rules:
-- apiGroups: [""]
-  resources: ["services", "statefulset", "replicaset", "pods", "pods/log", "ingress", "configMaps", "ServiceAccount"]
-  verbs: ["get", "list", "watch"]
