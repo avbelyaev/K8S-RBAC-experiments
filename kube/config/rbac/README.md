@@ -50,15 +50,16 @@ Suppose alice's sa looks like this:
 }
 ```
 
-Now we need to get alice's secret and token and debase64 them:
-```bash
-# secret name from above
-kubectl get secret alice-token-nt8wm -o json
+Now we need to get alice's secret and token and debase64 them. 
 
-# put ca.crt into 'ca.crt', token into 'token'
-# decode them from base64:
-base64 --decode ca.crt > alice-ca.crt
-base64 --decode token > alice.token
+Lets use [jq json parser](https://stedolan.github.io/jq/) (`-r` stands for raw-strings) 
+```bash
+secretName=$(kubectl -n stage get sa alice -o json | jq -r '.secrets[0].name')
+secret=$(kubectl -n stage get secret $secretName -o json)
+
+# get ca-certificate and token, debase64 them and put into files 'alice-ca.crt' and 'alice.token'
+echo $secret | jq -r '.data."ca.crt"' | base64 --decode > alice-ca.crt
+echo $secret | jq -r '.data.token' | base64 --decode > alice.token
 ```
 
 Also we should tell alice where is cluster's master:
