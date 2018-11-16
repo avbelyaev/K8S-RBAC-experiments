@@ -1,16 +1,21 @@
 # RBAC
 
-RBAC:
-- Roles and ClusterRoles: Consist of rules. The difference is the scope: 
-in a Role, the rules are applicable to a single namespace, whereas a ClusterRole is cluster-wide
-- Subjects:
+Concepts:
+- **Roles** and **ClusterRoles**: Consist of rules. The difference is the scope: 
+in a Role, the rules are applicable to a single namespace, whereas a ClusterRole is cluster-wide. But its just a role
+- **Subjects**:
   - User Accounts: These are global, and meant for humans or processes living outside the cluster.
-  - Service Accounts: This kind of account is namespaced and meant for intra-cluster processes running inside pods, which want to authenticate against the API
+  - Service Accounts: Binded to namespace account, and meant for intra-cluster processes running inside pods. Can be cluster-wide
   - Groups: This is used for referring to multiple accounts.
-- RoleBindings and ClusterRoleBindings: Just as the names imply, these bind subjects to roles (i.e. the operations a given user can perform).
+- **RoleBindings** and **ClusterRoleBindings**: Just as the names imply, these bind subjects to roles (i.e. the operations a given user can perform).
 As for Roles and ClusterRoles, the difference lies in the scope
 
-A "context" defines a named (cluster,user,namespace) tuple
+So, `ClusterRole` just says that somebody can perform some operations on given resources. 
+This 'somebody' is only binded with `(Cluster)RoleBinding`. So we can have 'generic' `ClusterRole`s with read-only access to pods.
+Next we bind it to user Alice (`service account`) and 'stage' namespaces via `RoleBinding`. The result lives in `Rolebiding`'s namespace,
+which is 'stage'. Now Alice can only read pods on 'stage'  
+
+A `context` defines a named (cluster,user,namespace) tuple for `kubectl` to work with. Namespace is optional
 
 Start up
 ```bash
@@ -21,15 +26,17 @@ minikube --extra-config=apiserver.Authorization.Mode=RBAC start
 # or hangs on 'Starting cluster components...' 
 ```
 
-## Tokens
+## Shared token
 
-#### on behalf of admin:
+See [authentication in k8s](https://kubernetes.io/docs/reference/access-authn-authz/authentication/)
+
+### Actions on behalf of admin:
 ```bash
 # create service account for alice at stage namespace
 kubectl -n stage create sa alice
 
 # create cluster-role (not namespace-scoped)
-kubectl create -f roles/stage-reader-role.yaml
+kubectl create -f roles/reader-cluster-role.yaml
 
 # bind role to sa via rolebinding (alice-staging-rb)
 kubectl create -f rb-alice.yaml
@@ -52,7 +59,7 @@ Suppose alice's sa looks like this:
 
 Now we need to get alice's secret and token and debase64 them. 
 
-Lets use [jq json parser](https://stedolan.github.io/jq/) (`-r` stands for raw-strings) 
+Lets use [jq json parser](https://stedolan.github.io/jq/) to parse jsons (`-r` stands for raw-strings) 
 ```bash
 secretName=$(kubectl -n stage get sa alice -o json | jq -r '.secrets[0].name')
 secret=$(kubectl -n stage get secret $secretName -o json)
@@ -71,7 +78,7 @@ Now we should give alice's credentials (`alice-ca.crt` and `alice.token`) and ma
 
 Since now cluster know that Alice exists
 
-#### on behalf of user:
+### Actions on behalf of user:
 
 Let's configure kubectl to interact with cluster. We should have `alice-ca.crt` and `alice.token`
 
@@ -95,7 +102,7 @@ kubectl config set-credentials alice --token=$(cat alice.token)
 # =============================
 # >>> BIND ALICE WITH CLUSTER AND NAMESPACE
 # context = (user,cluster,namespace)
-kubectl config set-context alice-stage --user=alice --cluster=mini-cluster --namespace=stage
+kubectl config set-context stage-ctx --user=alice --cluster=mini-cluster --namespace=stage
     
 # make sure everything has been created
 kubectl config view
@@ -103,7 +110,7 @@ kubectl config view
 
 Switch to context to interact with cluster
 ```bash
-kubectl config use-context alice-ctx
+kubectl config use-context stage-ctx
 
 # check permissions
 kubectl auth can-i get pods -n stage
@@ -115,18 +122,15 @@ kubectl auth can-i get pods -n prod
 
 ## X509 Certs
 ```bash
-# let Frodo be a user
-user=frodo
-
 # create key
-openssl genrsa -out certs/${user}.key 2048
+openssl genrsa -out certs/alice.key 2048
 
 # create certificate sign request (csr)
 # CN = username, O = group (*group can be used as subject in rolebinding later)
-openssl req -new -key certs/${user}.key -out certs/${user}.csr  -subj "/CN=${user}"
+openssl req -new -key certs/alice.key -out certs/alice.csr  -subj "/CN=alice"
 
 # generate final certificate
-openssl x509 -req -in certs/${user}.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -out certs/${user}.crt -days 500
+openssl x509 -req -in certs/alice.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -out certs/alice.crt -days 500
 ```
 
 Note: this dev.crt is created manually by accessing minikube's local CA file. The preffered way is 
@@ -176,6 +180,7 @@ kubectl delete $(kubectl get rolebinding --all-namespaces -o name | grep frodo) 
 - [k8s auth docs](https://kubernetes.io/docs/admin/authentication/)
 - [EBay k8s auth overview (deprecated)](https://github.com/eBay/Kubernetes/blob/master/docs/user-guide/kubeconfig-file.md)
 - [RBAC configuration](https://docs.bitnami.com/kubernetes/how-to/configure-rbac-in-your-kubernetes-cluster/#step-5-test-the-rbac-rule)
+- [Token-based RBAC](https://itnext.io/securing-kubernetes-cluster-access-3f0ea15428fa)
 
 ### TODO
 - [certificate signing request](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/)

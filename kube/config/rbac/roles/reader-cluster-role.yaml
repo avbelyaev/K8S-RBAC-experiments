@@ -1,8 +1,8 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  namespace: stage
-  name: stage-reader-role
+#  namespace: stage  // cluster role not restricted to namespace
+  name: reader-cluster-role
 rules:
 - apiGroups: ["", "extensions", "apps"]
   resources:

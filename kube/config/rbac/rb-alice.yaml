@@ -4,8 +4,8 @@ metadata:
   namespace: stage
   name: alice-staging-rb
 roleRef:
-  kind: Role
-  name: stage-reader-role
+  kind: ClusterRole
+  name: reader-cluster-role
   apiGroup: rbac.authorization.k8s.io
 subjects:
 - kind: ServiceAccount
