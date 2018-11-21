@@ -52,6 +52,7 @@ kubectl config set-context dev-context --cluster=minikube --namespace=stage-ns -
 
 ### TODO
 
+```
 {"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"devops-user", "namespace": "dev-ns",      "resource": "pods",             "readonly": true }}
 {"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"devops-user", "namespace": "dev-ns",      "resource": "deployments",      "readonly": true }}
 {"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"devops-user", "namespace": "dev-ns",      "resource": "services",         "readonly": true }}
@@ -63,3 +64,4 @@ kubectl config set-context dev-context --cluster=minikube --namespace=stage-ns -
 {"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"devops-user", "namespace": "prod-ns",      "resource": "services",         "readonly": true }}
 {"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"devops-user", "namespace": "prod-ns",      "resource": "secrets",          "readonly": true }}
 {"apiVersion": "abac.authorization.kubernetes.io/v1beta1", "kind": "Policy", "spec": {"user":"devops-user", "namespace": "prod-ns",      "resource": "configmaps",       "readonly": true }}
+```
