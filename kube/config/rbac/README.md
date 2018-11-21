@@ -102,6 +102,7 @@ kubectl config set-credentials alice --token=$(cat alice.token)
 # =============================
 # >>> BIND ALICE WITH CLUSTER AND NAMESPACE
 # context = (user,cluster,namespace)
+# default namespace is set as stage, but since alice's token allows us to access test ns, we can
 kubectl config set-context stage-ctx --user=alice --cluster=mini-cluster --namespace=stage
     
 # make sure everything has been created
@@ -113,7 +114,9 @@ Switch to context to interact with cluster
 kubectl config use-context stage-ctx
 
 # check permissions
-kubectl auth can-i get pods -n stage
+kubectl auth can-i get pods
+# yes (stage ns is accessed)
+kubectl auth can-i get pods -n test
 # yes
 kubectl auth can-i get pods -n prod
 # nope
