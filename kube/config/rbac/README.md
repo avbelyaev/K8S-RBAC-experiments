@@ -32,17 +32,17 @@ See [authentication in k8s](https://kubernetes.io/docs/reference/access-authn-au
 
 ### Actions on behalf of admin:
 ```bash
-# create service account for alice at stage namespace
-kubectl -n stage create sa alice
+# create service account for alice (not scoped to namespace)
+kubectl create sa alice
 
 # create cluster-role (not namespace-scoped)
 kubectl create -f roles/reader-cluster-role.yaml
 
-# bind role to sa via rolebinding (alice-staging-rb)
+# bind clusterRole and sa to test/stage ns via rolebinding (alice-staging-rb, alice-testing-rb)
 kubectl create -f rb-alice.yaml
 
 # alice's service account has been created
-kubectl -n stage get sa alice -o json
+kubectl get sa alice -o json
 ```
 
 Suppose alice's sa looks like this:
@@ -51,7 +51,7 @@ Suppose alice's sa looks like this:
     "kind": "ServiceAccount",
     "metadata": {
         "name": "alice",
-        "namespace": "stage"
+        "namespace": "default"
     },
     "secrets": [{ "name": "alice-token-nt8wm" }]
 }
@@ -61,8 +61,8 @@ Now we need to get alice's secret and token and debase64 them.
 
 Lets use [jq json parser](https://stedolan.github.io/jq/) to parse jsons (`-r` stands for raw-strings) 
 ```bash
-secretName=$(kubectl -n stage get sa alice -o json | jq -r '.secrets[0].name')
-secret=$(kubectl -n stage get secret $secretName -o json)
+secretName=$(kubectl get sa alice -o json | jq -r '.secrets[0].name')
+secret=$(kubectl get secret $secretName -o json)
 
 # get ca-certificate and token, debase64 them and put into files 'alice-ca.crt' and 'alice.token'
 echo $secret | jq -r '.data."ca.crt"' | base64 --decode > alice-ca.crt
