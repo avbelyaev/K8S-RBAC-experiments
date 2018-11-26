@@ -77,6 +77,12 @@ kubectl config use-context dev
 minikube --namespace=prod service flask-service --url
 ```
 
+# Helm
+```bash
+# render templates
+helm install --debug --dry-run ./mychart
+```
+
 ### Troubleshooting
 ```bash
 # in case of trouble do
