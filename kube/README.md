@@ -78,7 +78,12 @@ minikube --namespace=prod service flask-service --url
 ```
 
 # Helm
+
+Download & unpack:
 ```bash
+mkdir ~/helm
+tar -zxvf helm-v2.0.0-linux-amd64.tgz -C helm 
+
 # render templates
 helm install --debug --dry-run ./mychart
 ```
@@ -94,6 +99,16 @@ minikube start
 rm -rf ~/.minikube
 rm -rf ~/.kube
 ```
+
+### Helm
+```bash
+Error: release failed: namespaces "default" is forbidden: User "system:serviceaccount:kube-system:default" cannot get namespaces in the namespace "default"
+
+kubectl create sa --namespace kube-system tiller
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+kubectl patch deploy -n kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+```
+
 
 ### Notes
 - to pull images from local docker registry, after minikube start, run `eval $(minikube docker-env)` 
