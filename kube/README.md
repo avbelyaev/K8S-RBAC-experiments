@@ -51,6 +51,14 @@ kubectl get {pod/service/deployment}
 kubectl get pods -l app=flask
 kubectl describe pods hello-minikube-6bd65c5cb7-676hf
 kubectl describe {deployment/service} hello-world
+
+# logs
+kubectl logs flask-pod-1337
+# logs of all pods
+kubectl logs -l app=flask
+
+# port-forwarding to localhost:9000
+kubectl port-forward flask-pod-1337 9000:8080
 ```
 
 
@@ -77,6 +85,9 @@ kubectl config use-context dev
 minikube --namespace=prod service flask-service --url
 ```
 
+# TODO notes on HELM
+# TODO notes on portforwading
+
 # Helm
 
 Download & unpack:
@@ -86,7 +97,17 @@ tar -zxvf helm-v2.0.0-linux-amd64.tgz -C helm
 
 # render templates
 helm install --debug --dry-run ./mychart
+
+
+Error: release failed: namespaces "default" is forbidden: User "system:serviceaccount:kube-system:default" cannot get namespaces in the namespace "default"
+
+kubectl create sa --namespace kube-system tiller
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+kubectl patch deploy -n kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
 ```
+
+
+# Notes
 
 ### Troubleshooting
 ```bash
@@ -100,17 +121,7 @@ rm -rf ~/.minikube
 rm -rf ~/.kube
 ```
 
-### Helm
-```bash
-Error: release failed: namespaces "default" is forbidden: User "system:serviceaccount:kube-system:default" cannot get namespaces in the namespace "default"
-
-kubectl create sa --namespace kube-system tiller
-kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-kubectl patch deploy -n kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
-```
-
-
-### Notes
-- to pull images from local docker registry, after minikube start, run `eval $(minikube docker-env)` 
-and all images should be launched with flag `--image-pull-policy=Never`
+- Pull images from local registry: exec `eval $(minikube docker-env)`. 
+all images should be launched with flag `--image-pull-policy=Never` or with `spec.containers.imagePullPolicy: Never` in specification.
+If it did not work, try rebuild image and u r OK
 - Make sure linux version is downloaded with `curl -LO https://storage.googleapis.com... linux/amd64/kubectl`, not darwin
