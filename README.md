@@ -1,3 +1,5 @@
 # Kubernetes RBAC/ABAC experiments
 
-Main info about launching minikube and configuring RBAC/ABAC - at `kube` dir
+Basic K8S info - at `/kube` dir
+
+Launching minikube and configuring RBAC/ABAC - at `kube/config/{abac|rbac}` dir

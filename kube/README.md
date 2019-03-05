@@ -85,8 +85,29 @@ kubectl config use-context dev
 minikube --namespace=prod service flask-service --url
 ```
 
+### Secrets
+
+data-field of secret contains base64ed string
+```bash
+echo -n 'victoria' | base64
+# paste base64ed string into secret.yaml
+```
+
+### Port-forwarding
+
+We can connect our machine directly to port of certain pod! Its very convenient for debugging 
+
+Remember! Local->Remote
+
+```bash
+# connect localhost:8080 to remote pod's :5000
+kubectl port-forward pod/flask 8080:5000
+
+# we can also connect to deployment the same way
+```
+
 # TODO notes on HELM
-# TODO notes on portforwading
+
 
 # Helm
 
