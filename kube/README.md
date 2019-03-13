@@ -85,12 +85,41 @@ kubectl config use-context dev
 minikube --namespace=prod service flask-service --url
 ```
 
-### Secrets
+### ConfigMaps and Secrets
 
-data-field of secret contains base64ed string
+Config-map is a map that hold k-v pairs 
+
+Config map example:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: conf-map
+data:
+  my-name: anthony
+```
+
+Secret is a 'config-map' for sensitive data, where value is a base64ed string
+
 ```bash
 echo -n 'victoria' | base64
 # paste base64ed string into secret.yaml
+```
+
+In k8s resource descriptors they can be referenced in, for example, `env` section:
+```yaml
+env:
+- name: MY_NAME
+  valueFrom:
+    configMapKeyRef:
+      name: conf-map
+      key: my-name
+- name: MY_SECURED_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: victoria-secret
+      key: my-pwd
 ```
 
 ### Port-forwarding
