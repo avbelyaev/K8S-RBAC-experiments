@@ -105,6 +105,12 @@ Secret is a 'config-map' for sensitive data, where value is a base64ed string
 ```bash
 echo -n 'victoria' | base64
 # paste base64ed string into secret.yaml
+
+# or even easier:
+kubectl create secret generic victoria-secret \
+    --from-literal=name=anthony
+    --from-literal=password=qwerty 
+    --namespace my-namespace
 ```
 
 In k8s resource descriptors they can be referenced in, for example, `env` section:
