@@ -1,10 +1,10 @@
 FROM python:3-alpine
 
-COPY . /app
+RUN apk update
 
+COPY . /app
 WORKDIR /app
 
-RUN apk update
 RUN pip install -r requirements.txt --no-cache-dir
 
 EXPOSE 5000
