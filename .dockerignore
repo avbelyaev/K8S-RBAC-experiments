@@ -25,3 +25,4 @@ venv.bak/
 
 data/
 postgres-data/
+mongo_data/

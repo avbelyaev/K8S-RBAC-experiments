@@ -107,3 +107,4 @@ venv.bak/
 
 /postgres-data/
 /data/
+/mongo_data/
