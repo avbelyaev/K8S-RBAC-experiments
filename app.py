@@ -16,32 +16,6 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = f'mongodb://admin:admin@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}'
 mongo = PyMongo(app)
 
-#
-# @app.route('/users/<email>', methods=['POST'])
-# def save_user(email):
-#     print(f'Attempting to save user with email {email}')
-#
-#     users = User.objects
-#     existing_user = next(filter(lambda user_doc: user_doc.email == email, users), None)
-#     if existing_user:
-#         print(f'User with email {email} already exists')
-#         return app.response_class(
-#             response=json.dumps({'msg': 'user already exists'}),
-#             status=409,
-#             mimetype='application/json'
-#         )
-#
-#     else:
-#         user = User()
-#         user.email = email
-#         user.save()
-#         print(f'User with email {email} has been successfully saved')
-#         return app.response_class(
-#             response=json.dumps({'msg': f'User {email} has been saved!\n'}),
-#             status=200,
-#             mimetype='application/json'
-#         )
-
 
 @app.route('/any', methods=['POST'])
 def save_any():
