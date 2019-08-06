@@ -1,3 +1,3 @@
 Flask==0.12.3
-mongoengine
-flask_mongoengine
+mongoengine==0.18.2
+flask_mongoengine==0.9.5

@@ -1,19 +1,24 @@
-version: '2'
+version: '3'
 
 services:
   mongo:
-    image: mongo:3.4
+    image: mongo:4.1
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+      - MONGO_INITDB_DATABASE=kube
     ports:
       - 27017:27017
     volumes:
-      - ./data/db:/data/db
+      - ./mongo_data:/data/db
+    restart: always
 
-  service:
-    image: flask
-    environment:
-      - MONGO_HOST=mongo
-      - MONGO_PORT=27017
-    ports:
-      - "8080:5000"
-    depends_on:
-      - mongo
+#  service:
+#    image: flask
+#    environment:
+#      - MONGO_HOST=mongo
+#      - MONGO_PORT=27017
+#    ports:
+#      - "8080:5000"
+#    depends_on:
+#      - mongo
