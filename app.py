@@ -1,10 +1,12 @@
 #! /usr/bin/env python3.6
+import json
 import os
+
+from bson.json_util import dumps
 from flask import Flask
 from flask import request
 from flask_pymongo import PyMongo
 from functools import partial
-from bson.json_util import dumps
 
 print = partial(print, flush=True)
 
@@ -19,12 +21,34 @@ mongo = PyMongo(app)
 
 @app.route('/any', methods=['POST'])
 def save_any():
-    data = request.get_json()
-    print(f'Saving {data}')
+    data = None
+    req_json = request.get_json()
+    if req_json is not None:
+        data = req_json
 
+    elif request.data is not None:
+        # check if body is byte array and convert to json
+        req_bytes = request.data
+        bytes_str = req_bytes.decode('utf8').replace('\'', '\"')
+        try:
+            data = json.loads(bytes_str)
+        except json.decoder.JSONDecodeError as e:
+            data = {
+                'data': bytes_str,
+                'error': str(e)
+            }
+
+    else:
+        return app.response_class(
+            response=dumps({'msg': 'nothing to save'}),
+            status=200,
+            mimetype='application/json'
+        )
+
+    print(f'Saving data')
     mongo.db.kube.insert_one(data)
     return app.response_class(
-        response=dumps({'msg': f'request body has been saved!\n'}),
+        response=dumps({'msg': 'request has been saved!'}),
         status=200,
         mimetype='application/json'
     )
