@@ -29,7 +29,7 @@ def save_any():
     elif request.data is not None:
         # check if body is byte array and convert to json
         req_bytes = request.data
-        bytes_str = req_bytes.decode('utf8').replace('\'', '\"')
+        bytes_str = req_bytes.decode('utf8').replace('\'', '\\"')
         try:
             data = json.loads(bytes_str)
         except json.decoder.JSONDecodeError as e:
