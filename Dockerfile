@@ -1,11 +1,12 @@
 FROM python:alpine3.6
 
-RUN apk update
-
-COPY . /app
+COPY requirements.txt /app
 WORKDIR /app
 
+RUN apk update
 RUN pip install -r requirements.txt --no-cache-dir
+
+COPY . /app
 
 EXPOSE 5000
 
