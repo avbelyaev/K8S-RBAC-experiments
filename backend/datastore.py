@@ -1,15 +1,16 @@
 import os
 
-from bson.json_util import dumps
 from flask_pymongo import PyMongo
 
 mongo = None
 
 
+# just a mongo wrapper for testability (mocking it)
 class DataStore:
     def __init__(self, app):
         self.app = app
 
+    # lazy load mongo
     def _get_mongo(self) -> PyMongo:
         global mongo
         if mongo:
@@ -20,7 +21,7 @@ class DataStore:
             mongo_host = os.environ.get('MONGO_HOST')
         mongo_port = 27017
         mongo_db = 'kube'
-        print(f'connecting to mongo at {mongo_host}:{mongo_port}/{mongo_db}')
+        print(f'connecting to mongo at {mongo_host}:{mongo_port}/{mongo_db} as user "admin"')
 
         self.app.config['MONGO_URI'] = f'mongodb://admin:admin@{mongo_host}:{mongo_port}/{mongo_db}'
         mongo = PyMongo(self.app)

@@ -20,7 +20,7 @@ def save_any():
         data = req_json
 
     elif request.data is not None:
-        # check if body is byte array and convert to json
+        # check if body is byte array and try converting to json
         req_bytes = request.data
         bytes_str = req_bytes.decode('utf8').replace('\'', '\\"')
         try:
