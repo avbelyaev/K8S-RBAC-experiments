@@ -6,7 +6,7 @@
 
 ### FAQ
 
-- connect via Mongo Explorer (Intellij Idea plugin) with the following creds:
+- connect (e.g. with Mongo Explorer - Intellij Idea plugin) with the following creds:
   - uri: `localhost:27017`
   - creds: `admin/admin`
   - auth database: `kube`
@@ -14,7 +14,12 @@
 
 - example request to save json from body:
 ```bash
-curl -X POST http://18.209.211.193:8080/any -H 'content-type: application/json' -d '{"hello": "world"}'
+curl -X POST localhost:5000/api/docs -H 'content-type: application/json' -d '{"hello": "world"}'
+```
+
+or same via HTTPie:
+```bash
+http localhost:5000/api/docs hello=world
 ```
 
 - venv actions:
