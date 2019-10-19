@@ -1,11 +1,10 @@
-# Kubernetes RBAC/ABAC experiments
+# Kubernetes experiments
 
-Basic K8S info - at `/kube` dir
+- Basic notes on kubernetes - at `/kube`
+- Launching minikube, configuring RBAC/ABAC - at `kube/config/{abac|rbac}`
 
-Launching minikube and configuring RBAC/ABAC - at `kube/config/{abac|rbac}` dir
 
-
-### Flask notes
+### FAQ
 
 - connect via Mongo Explorer (Intellij Idea plugin) with the following creds:
   - uri: `localhost:27017`
@@ -17,3 +16,19 @@ Launching minikube and configuring RBAC/ABAC - at `kube/config/{abac|rbac}` dir
 ```bash
 curl -X POST http://18.209.211.193:8080/any -H 'content-type: application/json' -d '{"hello": "world"}'
 ```
+
+- venv actions:
+```bash
+source venv/bin/activate
+pip install -r requirements.txt 
+deactivate
+```
+
+- build actions:
+```bash
+docker build -t flask .
+docker run -p 5000:5000 flask
+docker exec -it <cnt_id> sh
+```
+
+- run Flask in dev mode == setting env `FLASK_ENV=development`

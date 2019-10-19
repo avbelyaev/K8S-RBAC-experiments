@@ -23,13 +23,3 @@ services:
     restart: always
     depends_on:
       - fix-mongodb-permissions
-
-#  service:
-#    build:
-#      context: .
-#    environment:
-#      - MONGO_HOST=mongo
-#    ports:
-#      - "8080:5000"
-#    depends_on:
-#      - mongo

@@ -19,7 +19,7 @@ app.config['MONGO_URI'] = f'mongodb://admin:admin@{MONGO_HOST}:{MONGO_PORT}/{MON
 mongo = PyMongo(app)
 
 
-@app.route('/any', methods=['POST'])
+@app.route('/api/docs', methods=['POST'])
 def save_any():
     data = None
     req_json = request.get_json()
@@ -54,7 +54,7 @@ def save_any():
     )
 
 
-@app.route("/all", methods=['GET'])
+@app.route("/api/docs", methods=['GET'])
 def get_all():
     print('Listing data')
     objects = []
@@ -69,15 +69,23 @@ def get_all():
     )
 
 
-@app.route("/headers")
+@app.route("/api/headers")
 def headers():
     rq_headers = request.headers
-    return f'Headers from rq:\n{rq_headers}'
+    return app.response_class(
+        response=dumps(rq_headers),
+        status=200,
+        mimetype='application/json'
+    )
 
 
-@app.route("/hello")
+@app.route("/api/hello")
 def hello():
-    return "Hello Flask v2!\n"
+    return app.response_class(
+        response=dumps({'msg': 'Hello flask!'}),
+        status=200,
+        mimetype='application/json'
+    )
 
 
 if __name__ == '__main__':
