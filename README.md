@@ -35,3 +35,6 @@ docker exec -it <cnt_id> sh
 - run Flask in dev mode == setting env `FLASK_ENV=development`
 
 - running tests: `pytest` from here
+
+- to write messages from `print` straight to container's stdout, use `print = partial(print, flush=True)` which
+flushes buffer (and writes data) immediately
