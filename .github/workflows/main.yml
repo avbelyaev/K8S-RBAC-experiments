@@ -1,0 +1,29 @@
+name: Flask CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+      
+    - name: Set up python
+      uses: actions/setup-python@v1.0.0
+      with:
+        python-version: '3.7'
+        architecture: 'x64'
+    
+    - name: Prepare venv
+      run: |
+        virtualenv venv -p python3
+        source venv/bin/activate
+        pip install -r requirements.txt 
+      
+    - name: Test
+      run: |
+        pytest backend/tests
+        
