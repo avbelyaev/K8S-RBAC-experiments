@@ -19,6 +19,7 @@ curl -X POST http://18.209.211.193:8080/any -H 'content-type: application/json' 
 
 - venv actions:
 ```bash
+virtualenv venv -p python3
 source venv/bin/activate
 pip install -r requirements.txt 
 deactivate
@@ -32,3 +33,5 @@ docker exec -it <cnt_id> sh
 ```
 
 - run Flask in dev mode == setting env `FLASK_ENV=development`
+
+- running tests: `pytest` from here
