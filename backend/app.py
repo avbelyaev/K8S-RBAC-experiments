@@ -73,12 +73,13 @@ def index():
     '''
 
 
-# for testing purpose:
 # after we have patched app with controllers, we can return it's 'final form'
-def get_app_for_test() -> Flask:
+def get_app() -> Flask:
     return app
 
 
 if __name__ == '__main__':
+    print(f'starting from app.py')
+
     print(app.url_map)
     app.run(host='0.0.0.0', port=5000)  # to be able to run in container

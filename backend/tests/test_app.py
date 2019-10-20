@@ -1,11 +1,11 @@
 import pytest
 
-from backend.app import get_app_for_test
+from backend.app import get_app
 
 
 @pytest.fixture
 def app():
-    app = get_app_for_test()
+    app = get_app()
     return app
 
 
