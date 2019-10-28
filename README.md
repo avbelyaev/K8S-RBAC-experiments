@@ -1,8 +1,12 @@
 # Kubernetes experiments
 
-- Basic notes on kubernetes - at `/kube`
-- Launching minikube, configuring RBAC/ABAC - at `kube/config/{abac|rbac}`
+- Basic notes on kubernetes - at `./kube`
+- Launching minikube, configuring RBAC/ABAC - at `./kube/config/{abac|rbac}`
 
+# Github Actions & Packages
+
+- see `./github/` for a pipeline (only 1 job)
+- see Packages at github repo - there will be a docker image available
 
 ### FAQ
 

@@ -1,9 +1,9 @@
-name: Flask CI
+name: Flask build image
 
 on: [push]
 
 jobs:
-  build:
+  build-image:
     runs-on: ubuntu-18.04
     steps:
     - name: Checkout
@@ -41,6 +41,6 @@ jobs:
         # log in
         docker login docker.pkg.github.com --username avbelyaev --password ${TOKEN}
 
-        # push image
+        # rewriting image evrytime since its just a test
         docker push ${DOCKER_IMAGE_ORIGIN}:latest
 
