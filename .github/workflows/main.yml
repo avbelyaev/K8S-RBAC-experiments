@@ -4,9 +4,7 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-18.04
-    
     steps:
     - name: Checkout
       uses: actions/checkout@v1
@@ -29,3 +27,20 @@ jobs:
         source venv/bin/activate
         pytest backend/tests
         
+    - name: Build image
+      # TODO try using $GITHUB_REPOSITORY instead of hardcoded owner/repo
+      # https://help.github.com/en/github/automating-your-workflow-with-github-actions/virtual-environments-for-github-actions#github_token-secret
+      env:
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        DOCKER_IMAGE_ORIGIN: "docker.pkg.github.com/avbelyaev/k8s-rbac-experiments/flask-sample"
+      run: |
+        # build image
+        docker build -t ${DOCKER_IMAGE_ORIGIN}:${GITHUB_SHA} .
+        docker tag ${DOCKER_IMAGE_ORIGIN}:${GITHUB_SHA} ${DOCKER_IMAGE_ORIGIN}:latest
+
+        # log in
+        docker login docker.pkg.github.com --username avbelyaev --password ${TOKEN}
+
+        # push image
+        docker push ${DOCKER_IMAGE_ORIGIN}:latest
+
