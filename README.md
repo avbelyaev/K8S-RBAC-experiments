@@ -34,6 +34,15 @@ pip install -r requirements.txt
 deactivate
 ```
 
+- or 
+```bash
+pip3 install virtualenv
+virtualenv venv --python python3
+# export LC_ALL=C in case of unsupported locale
+source venv/bin/activate
+pip install -r requirements.txt 
+```
+
 - build actions:
 ```bash
 docker build -t flask .
