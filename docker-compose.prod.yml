@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  app:
+    image: flask:1
+    depends_on:
+      - mongo
+    ports:
+      - 5000:5000
+    environment:
+      MONGO_HOST: mongo
+
+#  fixing issue when mongo cannot create directory `/bitnami/mongo` inside container
+#  when volume is mounted from host. so we are just changing permissions
+  fix-mongodb-permissions:
+    image: bitnami/mongodb:4.1
+    user: root
+    command: chown -R 1001:1001 /bitnami
+    volumes:
+      - ./mongo_data:/bitnami
+
+  mongo:
+    image: bitnami/mongodb:4.1
+    environment:
+      - MONGODB_USERNAME=admin
+      - MONGODB_PASSWORD=admin
+      - MONGODB_DATABASE=kube
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo_data:/bitnami
+    restart: always
+    depends_on:
+      - fix-mongodb-permissions

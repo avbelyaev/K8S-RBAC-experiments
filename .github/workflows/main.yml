@@ -44,3 +44,7 @@ jobs:
         # rewriting image evrytime since its just a test
         docker push ${DOCKER_IMAGE_ORIGIN}:latest
 
+#    - name: Deploy new version
+      # TODO: create separate job for this
+      # version: sha
+      # try ssh ubuntu@35.180.103.209 "cd /home/flask; sudo docker-compose up -d --force-rebuild"

@@ -17,7 +17,7 @@ def test_hello_flask(client):
 
 
 def test_should_return_empty_list_of_items(client, mocker):
-    mocker.patch('backend.app.DataStore.find_all', return_value=[])
+    mocker.patch('backend.app.DataSource.find_all', return_value=[])
     response = client.get("/api/docs")
 
     assert response.status_code == 200
@@ -36,7 +36,7 @@ def test_should_return_list_of_items(client, mocker):
         }
     ]
     # mock DataStore inside the scope of backend.app module
-    mocker.patch('backend.app.DataStore.find_all', return_value=expected_items)
+    mocker.patch('backend.app.DataSource.find_all', return_value=expected_items)
     response = client.get("/api/docs")
 
     assert response.status_code == 200

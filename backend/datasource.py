@@ -6,7 +6,7 @@ mongo = None
 
 
 # just a mongo wrapper for testability (mocking it)
-class DataStore:
+class DataSource:
     def __init__(self, app):
         self.app = app
 

@@ -5,7 +5,7 @@ from functools import partial
 from flask import Flask, jsonify
 from flask import request
 
-from backend.datastore import DataStore
+from backend.datasource import DataSource
 
 print = partial(print, flush=True)
 
@@ -33,14 +33,14 @@ def save_any():
         return jsonify({'info': 'nothing to save'}), 200
 
     print(f'Saving data')
-    DataStore(app).save_one(data)
+    DataSource(app).save_one(data)
     return jsonify({'info': 'request has been saved!'}), 200
 
 
 @app.route("/api/docs", methods=['GET'])
 def get_all():
     print('Listing data')
-    items = DataStore(app).find_all()
+    items = DataSource(app).find_all()
     return jsonify({'items': items}), 200
 
 
@@ -52,7 +52,7 @@ def headers():
 
 @app.route("/api/hello")
 def hello():
-    return jsonify({'info': 'Hello flask!'}), 200
+    return jsonify({'info': 'Hello flask 2!'}), 200
 
 
 @app.route('/')
