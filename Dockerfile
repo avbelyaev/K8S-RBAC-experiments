@@ -1,13 +1,14 @@
-FROM python:alpine3.6
+FROM python:alpine3.7
 
-COPY requirements.txt /app
 WORKDIR /app
+COPY requirements.txt /app
 
 RUN apk update
 RUN pip install -r requirements.txt --no-cache-dir
 
-COPY . /app
+COPY backend /app/backend
+COPY main.py /app
 
 EXPOSE 5000
 
-ENTRYPOINT ["python", "app.py"]
+ENTRYPOINT ["python", "main.py"]
