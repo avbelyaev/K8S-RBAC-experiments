@@ -1,6 +1,6 @@
 # Kubernetes experiments
 
-- Basic notes on kubernetes - at `./kube`
+- Basic notes on Kubernetes & Helm - at `./kube`
 - Launching minikube, configuring RBAC/ABAC - at `./kube/config/{abac|rbac}`
 
 # Github Actions & Packages
@@ -8,7 +8,7 @@
 - see `./github/` for a pipeline (only 1 job)
 - see Packages at github repo - there will be a docker image available
 
-### FAQ
+### Notes on using this sample flask app
 
 - connect (e.g. with Mongo Explorer - Intellij Idea plugin) with the following creds:
   - uri: `localhost:27017`
@@ -26,15 +26,7 @@ or same via HTTPie:
 http localhost:5000/api/docs hello=world
 ```
 
-- venv actions:
-```bash
-python3 -m venv ./venv
-source venv/bin/activate
-pip install -r requirements.txt 
-deactivate
-```
-
-- or 
+- venv:
 ```bash
 pip3 install virtualenv
 virtualenv venv --python python3

@@ -130,30 +130,31 @@ env:
 
 ### Port-forwarding
 
-We can connect our machine directly to port of certain pod! Its very convenient for debugging 
+We can connect our machine directly to port of certain pod/svc/etc! Its very convenient for debugging 
 
 Remember! Local->Remote
 
 ```bash
 # connect localhost:8080 to remote pod's :5000
-kubectl port-forward pod/flask 8080:5000
-
-# we can also connect to deployment the same way
+kubectl port-forward pod/my-flask 8080:5000
 ```
 
-# TODO notes on HELM
-
+we can also connect to deployment/svc the same way
 
 # Helm
 
-Download & unpack:
+- Package manager aka "brew for k8s"
+- Deploy unit - __chart__ - set of params interpolated into k8s resource descriptor 
+    - Search for charts with tag "postgres": `helm search postgres`
+- Deploying a chart creates a __release__
+- With Helm 2.x to deploy into cluster, you need "sudo-server" Tiller :) which deploys interpolated templates.
+    - Tiller has been removed in Helm 3
+- "Helm'ed" apps should only be managed by helm - touching them with kubectl may cause errors!!
+   
+- Installation:
 ```bash
 mkdir ~/helm
 tar -zxvf helm-v2.0.0-linux-amd64.tgz -C helm 
-
-# render templates
-helm install --debug --dry-run ./mychart
-
 
 Error: release failed: namespaces "default" is forbidden: User "system:serviceaccount:kube-system:default" cannot get namespaces in the namespace "default"
 
@@ -162,6 +163,58 @@ kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admi
 kubectl patch deploy -n kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
 ```
 
+### List releases
+
+- When using helm, you always talk to particular Tiller instance, thus in multi-ns clusters use flag `--tiller-namespace`
+    - Tiller sits in `kube-system` ns by default
+    - In case of deploying into `stage` ns, Tiller would sit in `stage-system` ns 
+```bash
+# list current releases in "stage" ns by connecting to Tiller at "stage-system" ns
+helm ls --tiller-namespace stage-system
+
+# list current state of components deployed in release "my-mongo"
+helm status my-mongo --tiller-namespace stage-system
+```
+
+### Install, Upgrade & Rollback
+
+- Find chart you want to install at <https://github.com/helm/charts>
+- Override default values from chart
+    - via `--set` flag: `$ helm ... --set "fullnameOverride=monga" ...`
+    - via `values.yaml` file `helm install ... -f values.yaml ...`
+    - the rightmost value wins
+- Mutating commands (those that change smth) should be run with `--dry-run --debug` flags. In this case, Helm will 
+interpolate templates, but wont apply them to cluster, so they can be reviewed one more time and only then be deployed
+    - like this: `helm install --name my-mongo stable/mongodb --dry-run --debug`  
+
+__Installing__:
+```bash
+helm install --name my-mongo \
+        --tiller-namespace stage-system \
+        --namespace stage \
+        -f values.yaml \
+        stable/mongodb
+```
+
+__Upgrading__:
+- upgrading does not differ from installing: Helm passes chart alongside with params so it does not pass parameters
+from previous installation. Thus to upgrade release, __you should pass same params that were used for installation__.
+
+__Rolling__:
+- See history of releases for particular release "my-mongo"
+```bash
+helm history my-mongo --tiller-namespace stage-system
+#REVISION  UPDATED                   STATUS      CHART             DESCRIPTION
+#1         Fri Aug 31 15:17:57 2019  SUPERSEDED  mongodb-2.1.10  Install complete
+#2         Fri Aug 31 15:21:08 2019  DEPLOYED    mongodb-2.1.10  Upgrade complete
+#3         Fri Aug 31 16:05:01 2019  DEPLOYED    mongodb-2.1.10  Upgrade complete
+```
+- to rollback, upgrade to prev revision: `helm rollback my-mongo 2`
+
+### Delete
+
+Deleting with `helm delete my-mongo` only deletes k8s resources from cluster but not the release.
+To remove both resources and release, use `helm delete --purge my-mongo` 
 
 # Notes
 
