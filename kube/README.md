@@ -200,6 +200,17 @@ __Upgrading__:
 - upgrading does not differ from installing: Helm passes chart alongside with params so it does not pass parameters
 from previous installation. Thus to upgrade release, __you should pass same params that were used for installation__.
 
+E.g. upgrading release from above with version (`mongodb-13.37` - only digits are used) of chart:
+```bash
+helm upgrade --name my-mogno \
+        --tiller-namespace stage-system \
+        --namespace stage \
+        -f values.yaml \
+        stable/mongodb \
+        --version 13.37
+```
+
+
 __Rolling__:
 - See history of releases for particular release "my-mongo"
 ```bash
@@ -207,7 +218,7 @@ helm history my-mongo --tiller-namespace stage-system
 #REVISION  UPDATED                   STATUS      CHART             DESCRIPTION
 #1         Fri Aug 31 15:17:57 2019  SUPERSEDED  mongodb-2.1.10  Install complete
 #2         Fri Aug 31 15:21:08 2019  DEPLOYED    mongodb-2.1.10  Upgrade complete
-#3         Fri Aug 31 16:05:01 2019  DEPLOYED    mongodb-2.1.10  Upgrade complete
+#3         Fri Aug 31 16:05:01 2019  DEPLOYED    mongodb-13.37   Upgrade complete
 ```
 - to rollback, upgrade to prev revision: `helm rollback my-mongo 2`
 
