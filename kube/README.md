@@ -244,4 +244,4 @@ rm -rf ~/.kube
 - Pull images from local registry: exec `eval $(minikube docker-env)`. 
 all images should be launched with flag `--image-pull-policy=Never` or with `spec.containers.imagePullPolicy: Never` in specification.
 If it did not work, try rebuild image and u r OK
-- Make sure linux version is downloaded with `curl -LO https://storage.googleapis.com... linux/amd64/kubectl`, not darwin
+- Make sure right version is downloaded with `curl -LO https://storage.googleapis.com... ` - linux or darwin
