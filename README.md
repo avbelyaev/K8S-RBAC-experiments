@@ -8,6 +8,12 @@
 - see `./github/` for a pipeline (only 1 job)
 - see Packages at github repo - there will be a docker image available
 
+Pushing image:
+- login at Packages
+  - get token with `packages:*` permissions
+  - `cat GITHUB_PACKAGES_TOKEN | docker login https://docker.pkg.github.com --username avbelyaev --password-stdin`
+- build, tag (`docker.pkg.github.com/avbelyaev/k8s-rbac-experiments/flask-sample`) and push
+
 ### Notes on using this sample flask app
 
 - connect (e.g. with Mongo Explorer - Intellij Idea plugin) with the following creds:
@@ -48,3 +54,6 @@ docker exec -it <cnt_id> sh
 
 - to write messages from `print` straight to container's stdout, use `print = partial(print, flush=True)` which
 flushes buffer (and writes data) immediately
+
+
+##
