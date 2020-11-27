@@ -1,5 +1,7 @@
 # Kubernetes experiments
 
+![Flask CI](https://github.com/avbelyaev/K8S-RBAC-experiments/workflows/Flask%20CI/badge.svg)
+
 - Basic notes on Kubernetes & Helm - at `./kube`
 - Launching minikube, configuring RBAC/ABAC - at `./kube/config/{abac|rbac}`
 
