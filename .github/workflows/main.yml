@@ -34,17 +34,10 @@ jobs:
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DOCKER_IMAGE_ORIGIN: "docker.pkg.github.com/avbelyaev/k8s-rbac-experiments/flask-sample"
       run: |
-        # build image
         docker build -t ${DOCKER_IMAGE_ORIGIN}:${GITHUB_SHA} .
         docker tag ${DOCKER_IMAGE_ORIGIN}:${GITHUB_SHA} ${DOCKER_IMAGE_ORIGIN}:latest
 
-        # log in
         docker login docker.pkg.github.com --username avbelyaev --password ${TOKEN}
-
-        # rewriting image evrytime since its just a test
+        
         docker push ${DOCKER_IMAGE_ORIGIN}:latest
 
-#    - name: Deploy new version
-      # TODO: create separate job for this
-      # version: sha
-      # try ssh ubuntu@35.180.103.209 "cd /home/flask; sudo docker-compose up -d --force-rebuild"
