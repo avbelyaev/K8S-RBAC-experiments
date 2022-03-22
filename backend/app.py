@@ -55,7 +55,6 @@ def hello():
     return jsonify({'info': 'Hello flask 2!'}), 200
 
 
-@app.route('/')
 @app.route('/index')
 def index():
     page_data = {
@@ -71,6 +70,13 @@ def index():
       </body>
     </html>
     '''
+
+
+# apparently the only way to handle /**
+@app.route('/', defaults={'u_path': ''})
+@app.route('/<path:u_path>')
+def catch_all(u_path):
+    print(repr(u_path))
 
 
 # after we have patched app with controllers, we can return it's 'final form'
